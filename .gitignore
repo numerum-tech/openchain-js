@@ -159,3 +159,10 @@ $RECYCLE.BIN/
 
 # Other files
 /ColorExplorer/ColorExplorer.Web/App_Data/version.txt
+
+#IDE
+.vscode
+.vs
+
+#node
+node_modules

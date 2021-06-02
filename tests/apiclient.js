@@ -1,4 +1,4 @@
-﻿// Copyright 2015 Coinprism, Inc.
+// Copyright 2015 Coinprism, Inc.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ var Long = require("protobufjs").Long;
 var RecordKey = openchain.RecordKey;
 
 describe('ApiClient', function () {
-    
-    var client = new openchain.ApiClient("https://test.openchain.org/");
-    
+
+    var client = new openchain.ApiClient("http://localhost:5000");
+
     it('getRecord ByteBuffer', function () {
         return client.getRecord(ByteBuffer.fromHex("0000")).then(function (result) {
             assert.equal(result.key.toHex(), "0000");
@@ -29,21 +29,21 @@ describe('ApiClient', function () {
             assert.equal(result.version.toHex(), "");
         });
     });
-    
+
     it('getRecord string', function () {
         return client.getRecord("/:DATA:info").then(function (result) {
             assert.equal(result.key.toHex(), "2f3a444154413a696e666f");
             assert.notEqual(result.value.toHex(), "");
         });
     });
-    
+
     it('getRecord RecordKey', function () {
         return client.getRecord(new RecordKey("/", "DATA", "info")).then(function (result) {
             assert.equal(result.key.toHex(), "2f3a444154413a696e666f");
             assert.notEqual(result.value.toHex(), "");
         });
     });
-    
+
     it('getRecord with version', function () {
         return client.getRecord("/:DATA:info", ByteBuffer.fromHex("")).then(function (result) {
             assert.equal(result.key.toHex(), "2f3a444154413a696e666f");
@@ -51,7 +51,7 @@ describe('ApiClient', function () {
             assert.equal(result.version.toHex(), "");
         });
     });
-    
+
     it('getRecord fail', function () {
         return client.getRecord("/:DATA:info", ByteBuffer.fromHex("abcd")).then(function (result) {
             assert.fail();
@@ -59,7 +59,7 @@ describe('ApiClient', function () {
             assert.equal(404, err.statusCode);
         });
     });
-    
+
     it('getDataRecord', function () {
         return client.getDataRecord("/", "info").then(function (result) {
             assert.equal(result.key.toHex(), "2f3a444154413a696e666f");
@@ -67,7 +67,7 @@ describe('ApiClient', function () {
             assert.notEqual(result.data, null);
         });
     });
-    
+
     it('getDataRecord with version', function () {
         return client.getDataRecord("/", "info", ByteBuffer.fromHex("")).then(function (result) {
             assert.equal(result.key.toHex(), "2f3a444154413a696e666f");
@@ -76,7 +76,7 @@ describe('ApiClient', function () {
             assert.equal(result.data, null);
         });
     });
-    
+
     it('getAccountRecord', function () {
         return client.getAccountRecord("/path/", "/asset/").then(function (result) {
             assert.equal(result.key.toHex(), "2f706174682f3a4143433a2f61737365742f");
@@ -84,13 +84,13 @@ describe('ApiClient', function () {
             assert.equal(result.balance, Long.ZERO);
         });
     });
-    
+
     it('initialize', function () {
         return client.initialize().then(function (result) {
             assert.notEqual(client.namespace.toHex(), "");
         });
     });
-    
+
     it('submit error', function () {
         var mutation = ByteBuffer.fromHex("0a03abcdef120b0a01ab12030a01cd1a01ef");
         return client.submit(mutation, []).then(function (result) {
@@ -100,7 +100,7 @@ describe('ApiClient', function () {
             assert.equal(result.statusCode, 400);
         });
     });
-    
+
     it('getSubAccounts', function () {
         return client.getSubAccounts("/").then(function (result) {
             assert.notEqual(result.length, 0);
@@ -109,21 +109,21 @@ describe('ApiClient', function () {
             assert.notEqual(result[0].version.toHex(), "");
         });
     });
-    
+
     it('getRecordMutations string', function () {
         return client.getRecordMutations("/:DATA:info").then(function (result) {
             assert.notEqual(result.length, 0);
             assert.notEqual(result[0].toHex(), "");
         });
     });
-    
+
     it('getRecordMutations RecordKey', function () {
         return client.getRecordMutations(new RecordKey("/", "DATA", "info")).then(function (result) {
             assert.notEqual(result.length, 0);
             assert.notEqual(result[0].toHex(), "");
         });
     });
-    
+
     it('getTransaction ByteBuffer', function () {
         return client.getRecordMutations("/:DATA:info").then(function (result) {
             return client.getTransaction(result[0]);
@@ -134,7 +134,7 @@ describe('ApiClient', function () {
             assert.notEqual(result.transactionHash.toHex(), "");
         });
     });
-    
+
     it('getTransaction string', function () {
         return client.getRecordMutations("/:DATA:info").then(function (result) {
             return client.getTransaction(result[0].toHex());
